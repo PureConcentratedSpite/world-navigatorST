@@ -1,0 +1,8 @@
+{
+    "display_name": "World Navigator",
+    "author": "You",
+    "version": "1.3.0",
+    "description": "Reads a coordinate map from an imported JSON file and provides location analysis in chat.",
+    "js": "world-navigator.js",
+    "generate_interceptor": "worldNavigatorInterceptor"
+}
