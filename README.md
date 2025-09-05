@@ -21,6 +21,7 @@ Must be used with custom .JSON containing grid coordinates, so that it can calcu
 2. Take this same .JSON and import it into SillyTavern, within World Info.
 
 **Examples of initial prompts to attempt:**
+
 a.) I'm currently at [1120, 2043], standing on a hill with a vantage point. What do I see? Give me distances, as well as provide the LocationAnalysis.
 b.) I'm currently at [1131, 1405], standing on a hill with a vantage point. What do I see?
 c.) Imagine that I've teleported away, and am now in a new location. [1300, 1900] What do I see?
