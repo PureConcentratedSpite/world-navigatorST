@@ -11,7 +11,7 @@ I'll add more, once I have an idea if I want more features to be present or not.
 - Combine with World Info, for a somewhat grounded AI that can return lore regarding mapped entries to craft a narrative.
 
 **Warning:**
-- Manual entries cannot be added to Lorebooks with these mappings due to no inherent coordinate functionality.
+- Manual entries cannot be added to Lorebooks with these mappings due to no inherent coordinate functionality present in World Info.
 - There is a way to add the coordinates to entries from ST; but they would be present in plain text within any entries added (Will write a guide as part of todo list)
 
 **Setup:**
