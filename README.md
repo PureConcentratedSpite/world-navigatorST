@@ -14,6 +14,8 @@ I'll add more, once I have an idea if I want more features to be present or not.
 
 - Combine with World Info, for a somewhat grounded AI that can return lore regarding mapped entries to craft a narrative.
 
+- Will keep Save States between chats. Chat 1 vs Chat 2 can have different location tracking in place, so the player character's position isn't forgotten.
+
 **Warning:**
 
 - Manual entries cannot be added to Lorebooks with these mappings due to no inherent coordinate functionality present in World Info.
