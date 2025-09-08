@@ -20,6 +20,7 @@
     const defaultSettings = Object.freeze({
         enabled: true,
         stickyLocation: true,
+        autoConfirm: false, // Feature: Auto-confirm setting
         worldData: null,
         fileName: '',
         chatStates: {},
@@ -126,16 +127,26 @@
             if (proposalMatch) {
                 const x = parseInt(proposalMatch[1], 10);
                 const y = parseInt(proposalMatch[2], 10);
-                if (!isConfirmationPending || (proposedLocation && (proposedLocation[0] !== x || proposedLocation[1] !== y))) {
-                    console.log(`World Navigator: AI proposed a new location at [${x}, ${y}].`);
-                    proposedLocation = [x, y];
-                    isConfirmationPending = true;
-                    saveChatState(activeChatId);
+
+                // Check if auto-confirm is enabled
+                if (settings.autoConfirm) {
+                    console.log(`World Navigator: AI proposed [${x}, ${y}], auto-confirming.`);
+                    updateAndSaveLocation([x, y]); // Directly update and save the location
+                } else {
+                    // Original behavior: set up for manual confirmation
+                    if (!isConfirmationPending || (proposedLocation && (proposedLocation[0] !== x || proposedLocation[1] !== y))) {
+                        console.log(`World Navigator: AI proposed a new location at [${x}, ${y}].`);
+                        proposedLocation = [x, y];
+                        isConfirmationPending = true;
+                        saveChatState(activeChatId);
+                    }
                 }
+                // Always remove the tag from the AI's message
                 lastAiMessage.mes = lastAiMessage.mes.replace(proposalRegex, '').trim();
             }
         }
 
+        // Show confirmation prompt only if pending (which only happens if auto-confirm is off)
         if (isConfirmationPending) {
             showConfirmationPrompt(`AI proposed move to [${proposedLocation[0]}, ${proposedLocation[1]}]. Reply with [confirm] to accept.`);
         } else {
@@ -166,6 +177,8 @@
             saveChatState(activeChatId);
             lastUserMessage.mes = messageContent.replace(clearRegex, '').trim();
         } else {
+            // This part now also correctly handles the case where the user sends a message
+            // while a confirmation is pending (and auto-confirm is off).
             if (isConfirmationPending) {
                 console.log(`World Navigator: User action rejected pending proposal.`);
                 isConfirmationPending = false;
@@ -223,6 +236,7 @@
         const status = settings.fileName ? `Loaded: ${settings.fileName}` : 'No map data loaded.';
         const isEnabled = settings.enabled ? 'checked' : '';
         const isStickyEnabled = settings.stickyLocation ? 'checked' : '';
+        const isAutoConfirmEnabled = settings.autoConfirm ? 'checked' : '';
         const settingsHtml = `
             <div id="world-navigator-container">
                 <div class="list-group-item list-group-item-background extensions_collapsible world-navigator-header">
@@ -238,6 +252,10 @@
                     <div class="inline-drawer">
                         <label for="world-navigator-sticky" title="Keeps the last location analysis in context. Recommended for this workflow.">Enable Sticky Location</label>
                         <input id="world-navigator-sticky" type="checkbox" ${isStickyEnabled}>
+                    </div>
+                    <div class="inline-drawer">
+                        <label for="world-navigator-auto-confirm" title="Automatically confirms and logs any [propose_location] tag from the AI, bypassing the need for manual confirmation.">Auto-Confirm AI Proposals</label>
+                        <input id="world-navigator-auto-confirm" type="checkbox" ${isAutoConfirmEnabled}>
                     </div>
                     <div class="inline-drawer">
                         <label>Map File Status:</label>
@@ -262,6 +280,7 @@
         });
         $('#world-navigator-enabled').on('change', function () { getSettings().enabled = this.checked; saveSettingsDebounced(); });
         $('#world-navigator-sticky').on('change', function () { getSettings().stickyLocation = this.checked; saveSettingsDebounced(); });
+        $('#world-navigator-auto-confirm').on('change', function () { getSettings().autoConfirm = this.checked; saveSettingsDebounced(); });
         $('#world-navigator-import-button').on('click', function () { $('#world-navigator-file-import').click(); });
         $('#world-navigator-file-import').on('change', handleFileImport);
         $('#world-navigator-clear-data').on('click', clearMapData);
